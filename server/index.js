@@ -1,9 +1,10 @@
-// טוען משתני סביבה (אם נשתמש בהם בהמשך)
 require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+
+const tasksRouter = require('./routes/tasks.routes');
 
 const app = express();
 
@@ -14,6 +15,8 @@ app.use(morgan('dev'));
 app.get('/health', (req, res) => {
   res.json({ ok: true });
 });
+
+app.use('/api/tasks', tasksRouter);
 
 const PORT = process.env.PORT || 4000;
 
