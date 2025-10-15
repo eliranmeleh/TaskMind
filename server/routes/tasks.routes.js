@@ -10,11 +10,9 @@ router.get("/", (req, res) => {
 
 // Adding a new task
 router.post("/", (req, res) => {
-  const title = req.body["title"]
-    
-  if (!title) {
-    return res.status(400).json({ error: "The name of the task misses"});
-  }
+  const {title} = req.body;
+
+  const index = tasks.findIndex(t => t.title === title);
 
   const newTask = {
     id: Date.now(), 
@@ -27,19 +25,17 @@ router.post("/", (req, res) => {
 });
 
 // Deleting an existing task
-router.delete("/", (req, res) => {
+router.post("/delete", (req, res) => {
   const { title } = req.body;
-  if (!title) {
-    return res.status(400).json({ error: "The name of the task misses"});
-  }
   
   const index = tasks.findIndex(t => t.title === title);
   if (index === -1) {
-    return res.status(404).json({ error: "There is no task with the matching name"});
+    res.redirect("/api/tasks");
+    return;
   }
 
-  tasks[index].delete;
-  res.status(201).json("Deleted successfully");
+  tasks.splice(index, 1);
+  res.redirect("/api/tasks");
 })
 
 // Updating a task to have a status "done"

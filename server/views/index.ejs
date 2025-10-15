@@ -13,6 +13,11 @@
       <button type="submit">Add Task</button>
     </form>
 
+    <form action="/api/tasks/delete" method="POST">
+      <input type="text" name="title" placeholder="Enter task title" required />
+      <button type="submit">Delete Task</button>
+    </form>
+
     <ul>
         <%tasks.forEach((task)=> { %>
         <li>
