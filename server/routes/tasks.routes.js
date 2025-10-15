@@ -5,12 +5,13 @@ let tasks = [];
 let idCounter = 1;
 
 router.get("/", (req, res) => {
-  res.json({ msg: "📋 All tasks will be listed here" });
+  res.render("index.ejs", { tasks });
 });
 
 // Adding a new task
 router.post("/", (req, res) => {
-  const { title } = req.body; 
+  const title = req.body["title"]
+    
   if (!title) {
     return res.status(400).json({ error: "The name of the task misses"});
   }
@@ -22,7 +23,7 @@ router.post("/", (req, res) => {
   };
 
   tasks.push(newTask);
-  res.status(201).json(newTask);
+  res.redirect("/api/tasks");
 });
 
 // Deleting an existing task
