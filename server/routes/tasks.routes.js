@@ -42,7 +42,7 @@ router.delete("/", (req, res) => {
 })
 
 // Updating a task to have a status "done"
-router.put("/", (req, res) => {
+router.patch("/", (req, res) => {
   const { title } = req.body;
   if (!title) {
     return res.status(400).json({ error: "The name of the task misses"});
