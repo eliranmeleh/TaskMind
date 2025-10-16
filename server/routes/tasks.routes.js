@@ -2,56 +2,55 @@ import express from "express";
 const router = express.Router();
 
 let tasks = [];
-let idCounter = 1;
+let nextId = 1;
 
+// Render the task list
 router.get("/", (req, res) => {
-  res.render("index.ejs", { tasks });
+  res.render("index.ejs", { tasks, error: null });
 });
 
-// Adding a new task
+// Add a new task
 router.post("/", (req, res) => {
-  const {title} = req.body;
+  const title = (req.body.title || "").trim();
 
-  const index = tasks.findIndex(t => t.title === title);
+  if (!title) {
+    // Return the same page with an error message
+    return res
+      .status(400)
+      .render("index.ejs", { tasks, error: "Task title is required" });
+  }
 
-  const newTask = {
-    id: Date.now(), 
-    title,
-    status: "todo"
-  };
+  // Optional: prevent duplicate titles
+  if (tasks.some((t) => t.title.toLowerCase() === title.toLowerCase())) {
+    return res
+      .status(409)
+      .render("index.ejs", { tasks, error: "Task title already exists" });
+  }
 
-  tasks.push(newTask);
-  res.redirect("/api/tasks");
+  tasks.push({ id: nextId++, title, status: "todo" });
+  return res.redirect(303, "/api/tasks");
 });
 
-// Deleting an existing task
-router.post("/delete", (req, res) => {
-  const { title } = req.body;
-  
-  const index = tasks.findIndex(t => t.title === title);
-  if (index === -1) {
-    res.redirect("/api/tasks");
-    return;
-  }
+// Mark a task as done
+router.post("/:id/done", (req, res) => {
+  const id = Number(req.params.id);
+  const task = tasks.find((t) => t.id === id);
+  if (!task) return res.redirect(303, "/api/tasks");
 
-  tasks.splice(index, 1);
-  res.redirect("/api/tasks");
-})
+  task.status = "done";
+  return res.redirect(303, "/api/tasks");
+});
 
-// Updating a task to have a status "done"
-router.patch("/", (req, res) => {
-  const { title } = req.body;
-  if (!title) {
-    return res.status(400).json({ error: "The name of the task misses"});
-  }
+// Delete a task
+router.post("/:id/delete", (req, res) => {
+  const id = Number(req.params.id);
+  tasks = tasks.filter((t) => t.id !== id);
+  return res.redirect(303, "/api/tasks");
+});
 
-  const index = tasks.findIndex(t => t.title === title);
-  if (index === -1) {
-    return res.status(404).json({ error: "There is no task with the matching name"});
-  }
-
-  tasks[index].status = "done";
-  res.status(201).json(tasks[index]);
-})
+// Optional: return JSON for API usage or fetch()
+router.get("/list.json", (req, res) => {
+  res.json(tasks);
+});
 
 export default router;

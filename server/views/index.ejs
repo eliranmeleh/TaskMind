@@ -1,32 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindTask</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
+    form { margin-bottom: 1rem; }
+    ul { list-style: none; padding: 0; }
+    li { background: #f0f0f0; margin: .5rem 0; padding: .5rem 1rem; display: flex; justify-content: space-between; }
+    .done { text-decoration: line-through; color: gray; }
+    .error { color: red; }
+  </style>
 </head>
 <body>
-    <h1>Hello world!</h1>
+  <h1>🧠 MindTask</h1>
 
-    <form action="/api/tasks" method="POST">
-      <input type="text" name="title" placeholder="Enter task title" required />
-      <button type="submit">Add Task</button>
-    </form>
+  <% if (error) { %>
+    <p class="error"><%= error %></p>
+  <% } %>
 
-    <form action="/api/tasks/delete" method="POST">
-      <input type="text" name="title" placeholder="Enter task title" required />
-      <button type="submit">Delete Task</button>
-    </form>
+  <form action="/api/tasks" method="POST">
+    <input type="text" name="title" placeholder="Enter task title" required />
+    <button type="submit">Add Task</button>
+  </form>
 
-    <ul>
-        <%tasks.forEach((task)=> { %>
-        <li>
-            <%=task.title %>
-        </li>
-        <%}) %>
-    </ul>
-
-
-    <script src="index.js" charset="UTF-8"></script>
+  <ul>
+    <% tasks.forEach((task) => { %>
+      <li>
+        <span class="<%= task.status === 'done' ? 'done' : '' %>"><%= task.title %></span>
+        <form action="/api/tasks/<%= task.id %>/delete" method="POST" style="display:inline;">
+          <button type="submit">🗑️</button>
+        </form>
+        <% if (task.status !== 'done') { %>
+          <form action="/api/tasks/<%= task.id %>/done" method="POST" style="display:inline;">
+            <button type="submit">✅</button>
+          </form>
+        <% } %>
+      </li>
+    <% }) %>
+  </ul>
 </body>
 </html>
