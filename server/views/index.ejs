@@ -21,7 +21,13 @@
     <ul>
         <%tasks.forEach((task)=> { %>
         <li>
-            <%=task.title %>
+            <form action="/api/tasks/task-complete" method="PATCH">
+                <label>
+                  <input type="hidden" name="title" value="<%= task.title %>" />
+                  <%= task.title %>
+                  <input type="checkbox" name="status" <%= task.status === 'done' ? %> checked  <%= : '' %> />
+                </label>
+            </form>
         </li>
         <%}) %>
     </ul>

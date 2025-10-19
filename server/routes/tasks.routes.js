@@ -39,19 +39,15 @@ router.post("/delete", (req, res) => {
 })
 
 // Updating a task to have a status "done"
-router.patch("/", (req, res) => {
-  const { title } = req.body;
-  if (!title) {
-    return res.status(400).json({ error: "The name of the task misses"});
-  }
+router.patch("/task-complete", (req, res) => {
+  const { title, status } = req.body;
 
   const index = tasks.findIndex(t => t.title === title);
-  if (index === -1) {
-    return res.status(404).json({ error: "There is no task with the matching name"});
-  }
 
-  tasks[index].status = "done";
-  res.status(201).json(tasks[index]);
+  if(status === "on")
+    tasks[index].status = "done";
+
+  res.redirect("/api/tasks");
 })
 
 export default router;
