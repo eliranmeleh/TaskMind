@@ -39,13 +39,16 @@ router.post("/delete", (req, res) => {
 })
 
 // Updating a task to have a status "done"
-router.patch("/task-complete", (req, res) => {
+router.post("/task-complete", (req, res) => {
   const { title, status } = req.body;
 
   const index = tasks.findIndex(t => t.title === title);
 
   if(status === "on")
     tasks[index].status = "done";
+  else {
+    tasks[index].status = "todo";
+  }
 
   res.redirect("/api/tasks");
 })
