@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const uri = "mongodb+srv://Mirmir:Aa123456@cluster0.tvyxxcg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = "mongodb+srv://Mirmir:Aa123456@cluster0.tvyxxcg.mongodb.net/TaskMindDB?retryWrites=true&w=majority&appName=Cluster0";
 
 const connectToDB = async () => {
   try {

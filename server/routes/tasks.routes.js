@@ -1,32 +1,33 @@
 import express from "express";
-import Task from "../db/task.model.js"; // ← זהו ה־Mongoose model האמיתי
+import Task from "../db/Tasks.js"; 
 
 const router = express.Router();
 
+// Route to fetch and display all tasks
 router.get("/", async (req, res) => {
   try {
-    const tasks = await Task.find();
-    res.render("index.ejs", { tasks });
+    const tasks = await Task.find(); // Gathers all of the tasks from MongoDB
+    res.render("index.ejs", { tasks }); // Send all of the tasks to the html file
   } catch (err) {
     console.error("Failed to fetch tasks:", err.message);
     res.status(500).send("Error fetching tasks");
   }
 });
 
-// Create new Task
+// Route to add a new task to MongoDB
 router.post("/", async (req, res) => {
   const { title } = req.body;
   try {
-    const task = new Task({ title });
+    const task = new Task({ title }); // Status will be 'todo' by default
     await task.save(); // Saves the Task in MongoDB
-    res.redirect("/api/tasks");
+    res.redirect("/api/tasks"); // Load the page again
   } catch (err) {
     console.error("Failed to create task:", err.message);
     res.status(500).send("Error creating task");
   }
 });
 
-// Delete Task
+// Route to delete a task by title 
 router.post("/delete", async (req, res) => {
   const { title } = req.body;
   try {
@@ -38,14 +39,14 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-// Update Task
+// Route to update a task by the status 
 router.post("/task-complete", async (req, res) => {
   const { title, status } = req.body;
   try {
     const task = await Task.findOne({ title });
     if (task) {
-      task.status = status === "on" ? "done" : "todo";
-      await task.save(); // Saves the task
+      task.status = status === "on" ? "done" : "todo"; // Checks whether the checkbox is checked
+      await task.save(); // Saves the task with the new updated status
     }
     res.redirect("/api/tasks");
   } catch (err) {
