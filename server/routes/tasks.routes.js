@@ -17,7 +17,19 @@ router.get("/", async (req, res) => {
 // Route to add a new task to MongoDB
 router.post("/", async (req, res) => {
   const { title } = req.body;
-  try {
+    try {
+    // Checking whether the title already exists
+    const existingTask = await Task.findOne({ title });
+    if (existingTask) {
+      const tasks = await Task.find();
+
+      return res.render("index.ejs", {
+        tasks,
+        error: {
+          type: "duplicate",
+          message: "Task already exists!"}
+      });
+    }
     const task = new Task({ title }); // Status will be 'todo' by default
     await task.save(); // Saves the Task in MongoDB
     res.redirect("/api/tasks"); // Load the page again
@@ -31,6 +43,19 @@ router.post("/", async (req, res) => {
 router.post("/delete", async (req, res) => {
   const { title } = req.body;
   try {
+    // Checking whether there's this title
+    const existingTask = await Task.findOne({ title });
+    if (!existingTask) {
+      const tasks = await Task.find();
+
+      return res.render("index.ejs", {
+        tasks,
+        error: {
+          type: "not exists",
+          message: "Task doesn't exist!"}
+      });
+    }
+
     await Task.findOneAndDelete({ title });
     res.redirect("/api/tasks");
   } catch (err) {

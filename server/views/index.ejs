@@ -13,10 +13,18 @@
       <button type="submit">Add Task</button>
     </form>
 
+    <% if (typeof error !== "undefined" && error.type === "duplicate") { %>
+      <p style="color: red; font-weight: bold;">Task Already exists!</p>
+    <% } %>
+
     <form action="/api/tasks/delete" method="POST">
       <input type="text" name="title" placeholder="Enter task title" required />
       <button type="submit">Delete Task</button>
     </form>
+
+    <% if (typeof error !== "undefined" && error.type === "not exists") { %>
+      <p style="color: red; font-weight: bold;">Task Doesn't exists!</p>
+    <% } %>
 
     <ul>
         <%tasks.forEach((task)=> { %>
@@ -33,7 +41,13 @@
         <%}) %>
     </ul>
 
+    <script>
+      if (exists) {
+        
+      }
+    </script>
 
     <script src="index.js" charset="UTF-8"></script>
+</script>
 </body>
 </html>
